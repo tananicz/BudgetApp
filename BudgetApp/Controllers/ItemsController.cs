@@ -58,8 +58,11 @@ namespace BudgetApp.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             ViewBag.CategoriesList = PrepareSelectList();
-            Item item = await dbContext.Items.Include(i => i.Category).SingleAsync(i => i.Id == id);
-            return View("CreateOrEdit", item);
+            Item? item = await dbContext.Items.Include(i => i.Category).FirstOrDefaultAsync(i => i.Id == id);
+            if (null != item)
+                return View("CreateOrEdit", item);
+            else
+                return new StatusCodeResult(StatusCodes.Status403Forbidden);
         }
 
         [ExpenseFormatter]
