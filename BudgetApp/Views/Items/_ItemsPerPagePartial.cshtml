@@ -1,0 +1,28 @@
+﻿@model PaginationInfo
+
+@{
+    Dictionary<string, string> routeParams = new Dictionary<string, string>(Model.RouteParams);
+    routeParams["page"] = "";
+    int currItemsPerPage = routeParams.ContainsKey("itemsPerPage") ? int.Parse(routeParams["itemsPerPage"]) : Model.DefaultItemsPerPage;
+    int[] selectOptions = new int[] { 5, 10, 25, 50 };
+}
+
+<div class="m-2" style="text-align: right;">
+    <span style="display: inline;">Liczba pozycji na stronie:</span>
+    <form style="display: inline;" method="get" asp-action="List" asp-all-route-data="routeParams">
+        <button class="btn btn-sm btn-secondary" style="display: block; float: right; margin-left: 10px; margin-top: -4px;" type="submit">Zastosuj</button>
+        <select style="width: 15%; display: block; float: right; margin-left: 10px; margin-top: -7px;" class="form-select" name="itemsPerPage">
+            @foreach (int option in selectOptions)
+            {
+                if (option == currItemsPerPage)
+                {
+                    <option value="@option" selected>@option</option>
+                }
+                else
+                {
+                    <option value="@option">@option</option>
+                }
+            }
+        </select>
+    </form>
+</div>

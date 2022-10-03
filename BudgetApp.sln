@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32630.192
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BudgetApp", "BudgetApp\BudgetApp.csproj", "{2CBE8AA1-5DF1-4794-9D68-293FCCC1F47B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2CBE8AA1-5DF1-4794-9D68-293FCCC1F47B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CBE8AA1-5DF1-4794-9D68-293FCCC1F47B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CBE8AA1-5DF1-4794-9D68-293FCCC1F47B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CBE8AA1-5DF1-4794-9D68-293FCCC1F47B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D6B2D238-9F11-4970-BC52-349A249FF632}
+	EndGlobalSection
+EndGlobal

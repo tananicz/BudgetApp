@@ -1,0 +1,38 @@
+﻿@model ListItemsModel
+
+@{
+    //we need paramsDictionary in TempData when sending post requests (delete item) and redirecting to other actions (add new item, edit existing item)
+    TempData["paramsDictionary"] = Model.PaginationInfo.RouteParams;
+}
+
+<link rel="stylesheet" href="~/css/DialogStyles.css" />
+<script src="~/js/DialogScripts.js"></script>
+
+<div class="m-2 p-2 pt-4 pb-4 border-bottom">
+    <table style="width: 100%;">
+        <tr>
+            <td><span style="display: inline-block; float: left; margin: 3px 20px auto 0;"><a asp-action="List" asp-all-route-data="@AppHelper.ResetAmbientRouteValues()"><i class="fa fa-2x fa-home"></i></a></span><span style="display: inline-block; float: left;"><a asp-action="New" class="btn btn-danger">Dodaj wydatek</a></span></td>
+            <td style="text-align: right;"><a asp-controller="Categories" asp-action="Show" class="btn btn-primary">Zarządzaj kategoriami</a></td>
+        </tr>
+    </table>
+</div>
+
+<partial name="_FilterPartial" model="Model" />
+
+<div class="m-2">
+    @if (Model.Items.Count() == 0)
+    {
+        <h5 class="mt-5 p-4 text-center text-white bg-danger">Nie znaleziono żadnych pozycji spełniających zadane warunki filtrowania</h5>
+    }
+    else
+    {
+        <table style="width: 100%; border-collapse: separate; border-spacing: 0 1em;">
+            @foreach (Item item in @Model.Items)
+            {
+                <partial name="_ExpensePartial" model="item" />
+            }
+        </table>
+    }
+</div>
+
+<partial name="_FooterPartial" model="Model.PaginationInfo" />

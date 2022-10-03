@@ -1,0 +1,16 @@
+﻿@model PaginationInfo
+
+@{
+    Dictionary<string, string> actionParameters = new Dictionary<string, string>(Model.RouteParams);
+    int currentPage = Model.RouteParams.ContainsKey("page") ? int.Parse(Model.RouteParams["page"]) : 1;
+}
+
+<div>
+    <p>
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            actionParameters["page"] = i.ToString();
+            <span style="margin-right: 1em;"><a class="btn btn-primary @(i == currentPage ? "disabled" : "")" asp-action="List" asp-all-route-data="actionParameters">@i</a></span>
+        }
+    </p>
+</div>

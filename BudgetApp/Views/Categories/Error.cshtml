@@ -1,0 +1,39 @@
+﻿@model Category
+
+<partial name="_ServerSideValidationPartial" />
+
+<h4 class="bg-info text-white m-2 p-4">Zarządzanie kategoriami</h4>
+
+<div class="m-2 p-2 pt-4 pb-4 border-bottom">
+    <table style="width: 100%;">
+        <tr>
+            <td style="text-align: right;"><a asp-controller="Items" asp-action="List" class="btn btn-primary">Powrót do wykazu dochodów i wydatków</a></td>
+        </tr>
+    </table>
+</div>
+
+<div class="m-2">
+    <table style="width: 100%; border-collapse: separate; border-spacing: 0 1em;">
+        <tr>
+            <td colspan="2" class="p-3 m-3 rounded-3" style="background-color: #ddd;">
+                <form method="post" asp-action="ModifyCategory">
+                    <input asp-for="CategoryId" hidden />
+                    <div class="mb-2">
+                        @if (Model.CategoryId == 0)
+                        {
+                            <label>Podaj nazwę <strong>nowej</strong> kategorii</label>
+                        }
+                        else
+                        {
+                            @inject BudgetDbContext dbContext
+                            <label>Wprowadź nową nazwę dla kategorii <strong>@dbContext.Categories.First(c => c.CategoryId == Model.CategoryId).Name</strong>:</label>  
+                        }
+                        <div><span asp-validation-for="Name"></span></div>
+                        <input class="form-control mt-2" asp-for="Name" />
+                    </div>
+                    <button type="submit" class="btn btn-primary">@(Model.CategoryId == 0 ? "Dodaj kategorię" : "Zmień nazwę kategorii")</button><a asp-action="Show" class="btn btn-secondary" style="float: right;">Anuluj</a>
+                </form>
+            </td>
+        </tr>
+    </table>
+</div>

@@ -1,0 +1,50 @@
+﻿@model Category
+
+@if (Model.CategoryId != 0)
+{
+    <tr>
+        @{
+            string existingItemsUrl = Url.Action("List", "Items", new { catId = Model.CategoryId });
+        }
+
+        <td style="border-bottom: 1px solid #ccc;">
+            <p class="h5"><strong>@Model.Name</strong></p>
+        </td>
+        <td style="border-bottom: 1px solid #ccc; text-align: right; padding-bottom: 1em;">
+            <span style="margin-right: 1.2em;"><a onclick="toggleEditRow('edit_@Model.CategoryId');"><i class="fa fa-2xl fa-pen-to-square" style="color: royalblue;"></i></a></span>
+            <span>
+                <form style="display: inline;" asp-action="DeleteCategory" method="post" id="deleteForm_@Model.CategoryId">
+                    <input type="hidden" asp-for="CategoryId" />
+                    <button type="button" onclick="confirmDeleteCategory('deleteForm_@Model.CategoryId', '@existingItemsUrl');" style="border: 0px; background-color: white;"><i class="fa fa-2xl fa-trash" style="color: #c00;"></i></button>
+                </form>
+            </span>
+        </td>
+    </tr>
+}
+<tr id="@(Model.CategoryId == 0 ? "addCategoryTr" : ("edit_" + @Model.CategoryId))" style="display: none;">
+    <td colspan="2" class="p-3 m-3 rounded-3" style="background-color: #ddd;">
+        <form asp-action="ModifyCategory" method="post">
+            <input asp-for="CategoryId" type="hidden" />
+            <input name="isNew" value="@(Model.CategoryId == 0 ? "true" : "false")" hidden />
+            @if (Model.CategoryId == 0)
+            {
+                <label>Podaj nazwę <strong>nowej</strong> kategorii</label>
+            }
+            else
+            {
+                <label>Wprowadź nową nazwę dla kategorii <strong>@Model.Name</strong>:</label> 
+            }
+            <div><span asp-validation-for="Name"></span></div>
+            <input class="form-control mt-2" asp-for="Name" />
+            <button type="submit" class="btn btn-primary mt-2">Zapisz</button>
+            @if (Model.CategoryId == 0)
+            {
+                <a class="btn btn-secondary mt-2" style="float: right;" onclick="toggleEditRow('addCategoryTr'); $('#addCategoryBtn').show(400);">Anuluj</a>
+            }
+            else
+            {
+                <a class="btn btn-secondary mt-2" style="float: right;" onclick="toggleEditRow('edit_@Model.CategoryId');">Anuluj</a>
+            }
+        </form>
+    </td>
+</tr>

@@ -1,0 +1,81 @@
+﻿@model Item
+@addTagHelper *, BudgetApp
+
+@{
+    bool isEditMode = (Model.Id != 0);
+
+    string bgColor = isEditMode ? "primary" : "info";
+    string formTitle = isEditMode ? "Edytuj wpis" : "Dodaj nowy wpis";
+
+    if (!isEditMode)
+        Model.DateTime = DateTime.Now;
+
+    bool isExpenseValid = !(ViewContext.ModelState.GetFieldValidationState(nameof(Model.Expense)) == Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Invalid);
+    bool outcome = false;
+    if (!isEditMode || (isExpenseValid && Model.Expense < 0) || (!isExpenseValid))
+    {
+        outcome = true;
+        Model.Expense = Math.Abs(Model.Expense);
+    }
+
+    Dictionary<string, string> paramsDictionary =  (Dictionary<string, string>) TempData.Peek("paramsDictionary") ?? null;
+}
+
+<style>
+    .form-group label {
+        font-weight: bold;
+    }
+</style>
+
+<partial name="_ServerSideValidationPartial" />
+<partial name="_ClientSideValidationPartial" />
+
+<h5 class="bg-@bgColor text-center text-white p-5 mt-4 mb-4">@formTitle</h5>
+
+<form asp-route="save" method="post" novalidate>
+    <input asp-for="Id" type="hidden" />
+    <div class="mb-2">
+        <label>Opis dochodu lub wydatku</label>
+        <div class="error-container"><span asp-validation-for="Name"></span></div>
+        <input class="form-control" asp-for="Name" />
+    </div>
+    <div class="mb-2">
+        <label>Kwota</label>
+        <div class="error-container"><span asp-validation-for="Expense"></span></div>
+        @if (isEditMode || !ViewContext.ViewData.ModelState.IsValid)
+        {
+            <input class="form-control" asp-for="Expense" exclude-default-js-number-validation />
+        }
+        else
+        {
+            <input class="form-control" asp-for="Expense" value="" exclude-default-js-number-validation />
+        }
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" id="out" name="outcome" value="true" @((outcome == true) ? "checked" : "") /><label class="form-check-label" for="out">Wydatek</label>
+    </div>
+    <div class="form-check mb-3">
+        <input class="form-check-input" type="radio" id="in" name="outcome" value="false" @((outcome == false) ? "checked" : "") /><label class="form-check-label" for="in">Dochód</label>
+    </div>
+    <div class="mb-2">
+        <label>Data</label>
+        <div class="error-container"><span asp-validation-for="DateTime"></span></div>
+        <input class="form-control" asp-for="DateTime" type="date" />
+    </div>
+    <div class="mb-4">
+        <label>Kategoria</label>
+        <div class="error-container"><span asp-validation-for="CategoryId"></span></div>
+        <select class="form-control" asp-for="CategoryId" asp-items="@ViewBag.CategoriesList"></select>
+    </div>
+
+    @if (isEditMode)
+    {
+        <input name="isNew" value="false" hidden/>
+    }
+    else
+    {
+        <input name="isNew" value="true" hidden/>
+    }
+
+    <button type="submit" class="btn btn-primary">Zapisz</button><a asp-action="List" asp-all-route-data="paramsDictionary" class="btn btn-secondary" style="float: right;">Anuluj</a>
+</form>

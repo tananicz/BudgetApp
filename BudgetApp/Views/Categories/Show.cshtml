@@ -1,0 +1,28 @@
+﻿@model IEnumerable<Category>
+
+<link rel="stylesheet" href="~/css/DialogStyles.css" />
+<script src="~/js/DialogScripts.js"></script>
+
+<partial name="_ServerSideValidationPartial" />
+<partial name="_ClientSideValidationPartial" />
+
+<h4 class="bg-info text-white m-2 p-4">Zarządzanie kategoriami</h4>
+
+<div class="m-2 p-2 pt-4 pb-4 border-bottom">
+    <table style="width: 100%;">
+        <tr>
+            <td style="text-align: left;"><a id="addCategoryBtn" class="btn btn-danger" onclick="toggleEditRow('addCategoryTr'); $(this).hide(400);">Dodaj kategorię</a></td>
+            <td style="text-align: right;"><a asp-controller="Items" asp-action="List" class="btn btn-primary">Powrót do wykazu dochodów i wydatków</a></td>
+        </tr>
+    </table>
+</div>
+
+<div class="m-2">
+    <table id="categoriesTable" style="width: 100%; border-collapse: separate; border-spacing: 0 1em;">
+        <partial name="_CategoryPartial" model="new Category();" />
+        @foreach (Category category in @Model)
+        {
+            <partial name="_CategoryPartial" model="category" />
+        }
+    </table>
+</div>

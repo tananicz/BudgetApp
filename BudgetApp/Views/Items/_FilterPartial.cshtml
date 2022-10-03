@@ -1,0 +1,56 @@
+﻿@model ListItemsModel
+
+@{
+    Dictionary<string, string> routeParams = Model.PaginationInfo.RouteParams;
+    bool isFilterApplied = routeParams.ContainsKey("catId") || routeParams.ContainsKey("fromDate") || routeParams.ContainsKey("toDate");
+    string catId = routeParams.ContainsKey("catId") ? routeParams["catId"] : "0";
+
+    if (isFilterApplied)
+    {
+        foreach (SelectListItem item in Model.CategoriesSelectList)
+        {
+            if (item.Value == catId)
+                item.Selected = true;
+        }
+    }
+}
+
+<script src="~/js/FilterDivScripts.js"></script>
+
+<div class="m-2 mb-0 p-2" id="preFilterDiv" style="background-color: lightblue; border-radius: 0.5em; border-radius: 0.5em;">
+    <button id="filterBtn" class="btn btn-secondary" onclick="toggleFilterDiv();">Filtruj pozycje</button>
+</div>
+<div class="m-2 mt-0 p-2" id="filterDiv" style="display: none; background-color: lightblue; border-bottom-left-radius: 0.5em; border-bottom-right-radius: 0.5em;">
+    <form asp-action="List" asp-all-route-data="@AppHelper.ResetAmbientRouteValues()" method="post">
+        <div class="container">
+            <div class="row">
+                @if (routeParams.ContainsKey("itemsPerPage"))
+                {
+                    <input name="itemsPerPage" value="@routeParams["itemsPerPage"]" hidden />
+                }
+                <div class="col-sm p-3 form-group">
+                    <label><strong>Kategoria</strong></label>
+                    <select class="form-select mt-2" asp-items="@Model.CategoriesSelectList" name="catId"></select>
+                </div>
+                <div class="col-sm p-3 form-group">
+                    <label><strong>Od daty</strong></label>
+                    <input class="form-control  mt-2" type="date" name="fromDate" id="fromDate" value="@(routeParams.ContainsKey("fromDate") ? routeParams["fromDate"] : "")" />
+                </div>
+                <div class="col-sm p-3 form-group">
+                    <label><strong>Do daty</strong></label>
+                    <input class="form-control mt-2" type="date" name="toDate" id="toDate" value="@(routeParams.ContainsKey("toDate") ? routeParams["toDate"] : "")" />
+                </div>
+                <div class="col-sm p-3 align-bottom">
+                    <button type="button" onclick="checkFilterDates($('#fromDate').val(), $('#toDate').val())" class="btn btn-primary mt-2" style="display: block; width: 100px;">Zastosuj</button>
+                    <button type="submit" id="applyFilter" hidden></button>
+                    <a class="btn btn-primary mt-2" style="width: 100px;" asp-action="List" asp-all-route-data="@AppHelper.ResetAmbientRouteValues()">Usuń filtr</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@if (isFilterApplied)
+{
+    <script>toggleFilterDiv();</script>
+}

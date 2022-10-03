@@ -1,0 +1,27 @@
+﻿@model Item
+
+@{
+    string expenseColor = (Model.Expense >= 0) ? "#32cd32" : "#c00";
+    string expenseType = (Model.Expense >= 0) ? "Dochód" : "Wydatek";
+}
+
+<tr>
+    <td style="border-bottom: 1px solid #ccc;">
+        <p style="margin-top: 0.5em; margin-bottom: 0.5em; color: royalblue"><strong>@Model.DateTime.ToShortDateString()</strong></p>
+        <p class="h5"><strong>@Model.Name</strong></p>
+        <p><span style="color: @expenseColor;"><strong>@expenseType</strong></span></p>
+    </td>
+    <td style="border-bottom: 1px solid #ccc;"><p class="h4"><span style="color: @expenseColor;"><strong>@Model.Expense.ToString("c")</strong></span></p></td>
+    <td style="border-bottom: 1px solid #ccc;"><p class="h5"><strong>@Model.Category.Name</strong></p></td>
+    <td style="border-bottom: 1px solid #ccc; text-align: center;">
+        <span style="margin-right: 1.2em;">
+            <a asp-action="Edit" asp-route-id="@Model.Id"><i class="fa fa-2xl fa-pen-to-square" style="color: royalblue;"></i></a>
+        </span>
+        <span>
+            <form style="display: inline;" asp-action="DeleteItem" method="post" id="deleteForm_@Model.Id">
+                <input type="hidden" asp-for="Id" />
+                <button type="button" onclick="confirmDeleteItem('deleteForm_@Model.Id');" style="border: 0px; background-color: white;"><i class="fa fa-2xl fa-trash" style="color: #c00;"></i></button>
+            </form>
+        </span>
+    </td>
+</tr>
