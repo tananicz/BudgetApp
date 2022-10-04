@@ -1,6 +1,5 @@
 ﻿using BudgetApp.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 
 namespace BudgetApp.Controllers
@@ -23,6 +22,12 @@ namespace BudgetApp.Controllers
         [HttpPost]
         public async Task<IActionResult> ModifyCategory(Category category, bool isNew)
         {
+            if (isNew && category.CategoryId != 0)
+                return new StatusCodeResult(StatusCodes.Status403Forbidden);
+
+            if (!isNew && !AppHelper.CheckEntityExistence(dbContext, typeof(Category), category.CategoryId))
+                return new StatusCodeResult(StatusCodes.Status403Forbidden);
+
             ModelState.Remove(nameof(Category.Items));
 
             if (ModelState.IsValid)
@@ -51,15 +56,15 @@ namespace BudgetApp.Controllers
             {
                 if (catToRemove.Items.Count() > 0)
                     ModelState.AddModelError("", "Items exist assigned to category");
-            }
-            else
-                ModelState.AddModelError("", "Category does not exist");
 
-            if (ModelState.IsValid)
-            {
-                dbContext.Categories.Remove(catToRemove!);
-                await dbContext.SaveChangesAsync();
-                return RedirectToAction(nameof(Show));
+                if (ModelState.IsValid)
+                {
+                    dbContext.Categories.Remove(catToRemove!);
+                    await dbContext.SaveChangesAsync();
+                    return RedirectToAction(nameof(Show));
+                }
+                else
+                    return new StatusCodeResult(StatusCodes.Status403Forbidden);
             }
             else
                 return new StatusCodeResult(StatusCodes.Status403Forbidden);

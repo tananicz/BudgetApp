@@ -23,18 +23,7 @@ namespace BudgetApp.Controllers
             int skip = (page - 1) * itemsPerPage;
 
             IEnumerable<Item> itemsFiltered = dbContext.Items.Include(i => i.Category).Where(AppHelper.FilterAdapter(catId, fromDate, toDate)).OrderByDescending(i => i.DateTime);
-
-            Dictionary<string, string> routeParamsForModel = new Dictionary<string, string>();
-            if (page != 1) 
-                routeParamsForModel.Add("page", page.ToString());
-            if (itemsPerPage != defaultItemsPerPage) 
-                routeParamsForModel.Add("itemsPerPage", itemsPerPage.ToString());
-            if (catId != 0)
-                routeParamsForModel.Add("catId", catId.ToString());
-            if (fromDate.HasValue)
-                routeParamsForModel.Add("fromDate", fromDate.Value.ToString(dateFormat));
-            if (toDate.HasValue)
-                routeParamsForModel.Add("toDate", toDate.Value.ToString(dateFormat));
+            Dictionary<string, string> routeParamsForModel = PrepareRouteParamsForModel(page, itemsPerPage, catId, fromDate, toDate);
 
             ListItemsModel model = new ListItemsModel {
                 Items = itemsFiltered.Skip(skip).Take(itemsPerPage),
@@ -57,10 +46,12 @@ namespace BudgetApp.Controllers
 
         public async Task<IActionResult> Edit(int id)
         {
-            ViewBag.CategoriesList = PrepareSelectList();
             Item? item = await dbContext.Items.Include(i => i.Category).FirstOrDefaultAsync(i => i.Id == id);
             if (null != item)
+            {
+                ViewBag.CategoriesList = PrepareSelectList();
                 return View("CreateOrEdit", item);
+            }
             else
                 return new StatusCodeResult(StatusCodes.Status403Forbidden);
         }
@@ -69,6 +60,15 @@ namespace BudgetApp.Controllers
         [HttpPost]
         public async Task<IActionResult> AddOrUpdateItem(Item item, bool outcome, bool isNew)
         {
+            if (isNew && item.Id != 0)
+                return new StatusCodeResult(StatusCodes.Status403Forbidden);
+
+            if (!isNew && !AppHelper.CheckEntityExistence(dbContext, typeof(Item), item.Id))
+                return new StatusCodeResult(StatusCodes.Status403Forbidden);
+            
+            if (!AppHelper.CheckEntityExistence(dbContext, typeof(Category), item.CategoryId))
+                return new StatusCodeResult(StatusCodes.Status403Forbidden);
+
             ModelState.Remove(nameof(Item.Category));
 
             if (ModelState.IsValid)
@@ -97,6 +97,9 @@ namespace BudgetApp.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteItem(Item item)
         {
+            if (!AppHelper.CheckEntityExistence(dbContext, typeof(Item), item.Id))
+                return new StatusCodeResult(StatusCodes.Status403Forbidden);
+
             Dictionary<string, string> paramsDictionary = (Dictionary<string, string>) TempData["paramsDictionary"] ?? null;
 
             dbContext.Items.Remove(item);
@@ -122,6 +125,24 @@ namespace BudgetApp.Controllers
                 categories = dbContext.Categories;
 
             return new SelectList(categories, "CategoryId", "Name");
+        }
+
+        private Dictionary<string, string> PrepareRouteParamsForModel(int page, int itemsPerPage, int catId, DateTime? fromDate, DateTime? toDate)
+        {
+            Dictionary<string, string> output = new Dictionary<string, string>();
+
+            if (page != 1)
+                output.Add("page", page.ToString());
+            if (itemsPerPage != defaultItemsPerPage)
+                output.Add("itemsPerPage", itemsPerPage.ToString());
+            if (catId != 0)
+                output.Add("catId", catId.ToString());
+            if (fromDate.HasValue)
+                output.Add("fromDate", fromDate.Value.ToString(dateFormat));
+            if (toDate.HasValue)
+                output.Add("toDate", toDate.Value.ToString(dateFormat));
+
+            return output;
         }
     }
 }

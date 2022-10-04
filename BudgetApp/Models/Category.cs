@@ -8,6 +8,7 @@ namespace BudgetApp.Models
         public int CategoryId { get; set; }
 
         [Required(ErrorMessage = "Proszę podać nazwę kategorii")]
+        [MaxLength(255)]
         public string Name { get; set; }
 
         [BindNever]

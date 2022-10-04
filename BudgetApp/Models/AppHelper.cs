@@ -4,6 +4,18 @@ namespace BudgetApp.Models
 {
     public class AppHelper
     {
+        public static bool CheckEntityExistence(DbContext dbContext, Type entityType, int key)
+        {
+            object? entity = dbContext.Find(entityType, key);
+            if (entity == null)
+                return false;
+            else
+            {
+                dbContext.Entry(entity).State = EntityState.Detached;
+                return true;
+            }
+        }
+
         public static Dictionary<string, string> ResetAmbientRouteValues() => new Dictionary<string, string>()
         {
             { "page", "" },

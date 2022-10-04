@@ -9,6 +9,7 @@ namespace BudgetApp.Models
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Proszę wprowadzić nazwę wydatku lub dochodu")]
+        [MaxLength(255)]
         public string Name { get; set; }
 
         [Column(TypeName = "decimal(8, 2)")]
