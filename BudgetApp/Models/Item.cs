@@ -14,7 +14,7 @@ namespace BudgetApp.Models
         [Column(TypeName = "decimal(8, 2)")]
         [Display(Name = "Kwota")]
         [Required(ErrorMessage = "Proszę podać wartość wydatku lub dochodu")]
-        [RegularExpression(@"^\s*\d{1,3}(\s?\d{3})*((\.|\,){1}\d{1,2})?\s*(zł)?\s*$", ErrorMessage = "Proszę podać niezerową wartość dodatnią")]
+        [RegularExpression(@"^(\s*\d){1,6}(\s*(\.|\,){1}(\s*\d){1,2})?\s*(zł)?\s*$", ErrorMessage = "Proszę podać niezerową wartość dodatnią mniejszą od 999 999,99 zł")]
         [DisplayFormat(DataFormatString = "{0:c2}", ApplyFormatInEditMode = true)]
         public decimal Expense { get; set; }
 

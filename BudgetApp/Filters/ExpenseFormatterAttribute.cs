@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Primitives;
+using System.Text.RegularExpressions;
 
 namespace BudgetApp.Filters
 {
@@ -15,7 +15,8 @@ namespace BudgetApp.Filters
             if (formData.ContainsKey("Expense"))
             {
                 string expense = formData["Expense"].ToString();
-                expense = expense.Replace('.', ',').Replace("zł", "").Replace(@"\s+", "").Trim();
+                expense = Regex.Replace(expense, @"\s+", "");
+                expense = expense.Replace('.', ',').Replace("zł", "");
                 formData["Expense"] = expense;
             }
 
