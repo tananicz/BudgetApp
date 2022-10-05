@@ -82,7 +82,7 @@ namespace BudgetApp.Controllers
                     dbContext.Items.Update(item);
 
                 await dbContext.SaveChangesAsync();
-                return RedirectToAction(nameof(List), isNew ? null : (((Dictionary<string, string>) TempData["paramsDictionary"]) ?? null));
+                return RedirectToAction(nameof(List), isNew ? null : (((Dictionary<string, string>?) TempData["paramsDictionary"]) ?? null));
             }
             else
             {
@@ -100,7 +100,7 @@ namespace BudgetApp.Controllers
             if (!AppHelper.CheckEntityExistence(dbContext, typeof(Item), item.Id))
                 return new StatusCodeResult(StatusCodes.Status403Forbidden);
 
-            Dictionary<string, string> paramsDictionary = (Dictionary<string, string>) TempData["paramsDictionary"] ?? null;
+            Dictionary<string, string>? paramsDictionary = (Dictionary<string, string>?) TempData["paramsDictionary"] ?? null;
 
             dbContext.Items.Remove(item);
             await dbContext.SaveChangesAsync();
@@ -109,7 +109,7 @@ namespace BudgetApp.Controllers
 
         private SelectList PrepareSelectList(bool addEmptyOption = false, string emptyOptionLabel = "")
         {
-            IEnumerable<Category> categories = null;
+            IEnumerable<Category>? categories = null;
 
             if (addEmptyOption)
             {
