@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BudgetApp.Repository
 {
-    public static class DbSeeder
+    public class DbSeeder
     {
-        public static void InitializeDb(BudgetDbContext context, ILogger<AppHelper> logger)
+        public static void InitializeDb(BudgetDbContext context, ILogger<DbSeeder> logger)
         {
             if (context.Database.GetPendingMigrations().Any())
             {
