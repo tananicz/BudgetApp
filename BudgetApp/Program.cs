@@ -1,4 +1,5 @@
 using BudgetApp.Models;
+using BudgetApp.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,7 +19,7 @@ var app = builder.Build();
 
 using (IServiceScope scope = app.Services.CreateScope())
 {
-    AppHelper.InitializeDb(scope.ServiceProvider.GetRequiredService<BudgetDbContext>(), app.Services.GetRequiredService<ILogger<AppHelper>>());
+    DbSeeder.InitializeDb(scope.ServiceProvider.GetRequiredService<BudgetDbContext>(), app.Services.GetRequiredService<ILogger<AppHelper>>());
 }
 app.UseStaticFiles();
 app.UseRouting();
