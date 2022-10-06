@@ -25,8 +25,9 @@
                         }
                         else
                         {
-                            @inject BudgetDbContext dbContext
-                            <label>Wprowadź nową nazwę dla kategorii <strong>@dbContext.Categories.First(c => c.CategoryId == Model.CategoryId).Name</strong>:</label>  
+                            @using BudgetApp.Repository
+                            @inject IDataRepository dataRepository
+                            <label>Wprowadź nową nazwę dla kategorii <strong>@((await dataRepository.GetCategory(Model.CategoryId))?.Name ?? "")</strong>:</label>  
                         }
                         <div><span asp-validation-for="Name"></span></div>
                         <input class="form-control mt-2" asp-for="Name" />

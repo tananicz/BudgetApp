@@ -1,36 +1,37 @@
 ﻿using BudgetApp.Filters;
 using BudgetApp.Models;
+using BudgetApp.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 
 namespace BudgetApp.Controllers
 {
     [AutoValidateAntiforgeryToken]
     public class ItemsController : Controller
     {
-        private const int defaultItemsPerPage = 10;
-        private const string dateFormat = "yyyy-MM-dd";
-        private BudgetDbContext dbContext;
+        private const int DefaultItemsPerPage = 10;
+        private const string DateFormat = "yyyy-MM-dd";
 
-        public ItemsController(BudgetDbContext dbContext) 
+        private readonly IDataRepository _dataRepository;
+
+        public ItemsController(IDataRepository dataRepository)
         {
-            this.dbContext = dbContext;
+            _dataRepository = dataRepository;
         }
 
-        public IActionResult List(DateTime? fromDate, DateTime? toDate, int page = 1, int catId = 0, int itemsPerPage = defaultItemsPerPage)
+        public IActionResult List(DateTime? fromDate, DateTime? toDate, int page = 1, int catId = 0, int itemsPerPage = DefaultItemsPerPage)
         {
             int skip = (page - 1) * itemsPerPage;
 
-            IEnumerable<Item> itemsFiltered = dbContext.Items.Include(i => i.Category).Where(AppHelper.FilterAdapter(catId, fromDate, toDate)).OrderByDescending(i => i.DateTime);
+            List<Item>? itemsFiltered = _dataRepository.GetItems(true, AppHelper.FilterAdapter(catId, fromDate, toDate));
             Dictionary<string, string> routeParamsForModel = PrepareRouteParamsForModel(page, itemsPerPage, catId, fromDate, toDate);
 
             ListItemsModel model = new ListItemsModel {
-                Items = itemsFiltered.Skip(skip).Take(itemsPerPage),
+                Items = (itemsFiltered != null) ? itemsFiltered.Skip(skip).Take(itemsPerPage) : new List<Item>(),
                 CategoriesSelectList = PrepareSelectList(true, "Wszystkie kategorie"),
                 PaginationInfo = new PaginationInfo {
-                    TotalPages = (int)Math.Ceiling(itemsFiltered.Count() / (float)itemsPerPage),
-                    DefaultItemsPerPage = defaultItemsPerPage,
+                    TotalPages = (int)Math.Ceiling(((itemsFiltered != null) ? itemsFiltered.Count() : 0) / (float)itemsPerPage),
+                    DefaultItemsPerPage = DefaultItemsPerPage,
                     RouteParams = routeParamsForModel,
                 }
             };
@@ -46,50 +47,68 @@ namespace BudgetApp.Controllers
 
         public async Task<IActionResult> Edit(int id)
         {
-            Item? item = await dbContext.Items.Include(i => i.Category).FirstOrDefaultAsync(i => i.Id == id);
+            Item? item = await _dataRepository.GetItem(id);
+
             if (null != item)
             {
                 ViewBag.CategoriesList = PrepareSelectList();
                 return View("CreateOrEdit", item);
             }
             else
+            { 
                 return new StatusCodeResult(StatusCodes.Status403Forbidden);
+            }
         }
 
         [ExpenseFormatter]
         [HttpPost]
         public async Task<IActionResult> AddOrUpdateItem(Item item, bool outcome, bool isNew)
         {
-            if (isNew && item.Id != 0)
+            if (isNew && item.Id != 0) 
+            { 
                 return new StatusCodeResult(StatusCodes.Status403Forbidden);
+            }
 
-            if (!isNew && !AppHelper.CheckEntityExistence(dbContext, typeof(Item), item.Id))
+            if (!isNew && !_dataRepository.CheckEntityExistence(typeof(Item), item.Id)) 
+            {    
                 return new StatusCodeResult(StatusCodes.Status403Forbidden);
-            
-            if (!AppHelper.CheckEntityExistence(dbContext, typeof(Category), item.CategoryId))
+            }
+
+            if (!_dataRepository.CheckEntityExistence(typeof(Category), item.CategoryId))
+            { 
                 return new StatusCodeResult(StatusCodes.Status403Forbidden);
+            }
 
             ModelState.Remove(nameof(Item.Category));
 
             if (ModelState.IsValid)
             {
                 if (outcome)
+                { 
                     item.Expense *= -1;
+                }
 
                 if (isNew)
-                    await dbContext.Items.AddAsync(item);
+                { 
+                    await _dataRepository.AddItem(item);
+                }
                 else
-                    dbContext.Items.Update(item);
+                {
+                    await _dataRepository.UpdateItem(item);
+                }
 
-                await dbContext.SaveChangesAsync();
                 return RedirectToAction(nameof(List), isNew ? null : (((Dictionary<string, string>?) TempData["paramsDictionary"]) ?? null));
             }
             else
             {
                 if (isNew)
+                { 
                     ViewBag.CategoriesList = PrepareSelectList(true, "Wybierz kategorię");
+                }
                 else
+                { 
                     ViewBag.CategoriesList = PrepareSelectList();
+                }
                 return View("CreateOrEdit", item);
             }
         }
@@ -97,23 +116,23 @@ namespace BudgetApp.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteItem(Item item)
         {
-            if (!AppHelper.CheckEntityExistence(dbContext, typeof(Item), item.Id))
+            if (!_dataRepository.CheckEntityExistence(typeof(Item), item.Id))
                 return new StatusCodeResult(StatusCodes.Status403Forbidden);
 
             Dictionary<string, string>? paramsDictionary = (Dictionary<string, string>?) TempData["paramsDictionary"] ?? null;
 
-            dbContext.Items.Remove(item);
-            await dbContext.SaveChangesAsync();
+            await _dataRepository.RemoveItem(item);
+
             return RedirectToAction(nameof(List), paramsDictionary);
         }
 
         private SelectList PrepareSelectList(bool addEmptyOption = false, string emptyOptionLabel = "")
         {
-            IEnumerable<Category>? categories = null;
+            IEnumerable<Category>? categories = _dataRepository.GetCategories();
 
-            if (addEmptyOption)
+            if (addEmptyOption && categories != null)
             {
-                List<Category> catList = new List<Category>(dbContext.Categories);
+                List<Category> catList = new List<Category>(categories);
                 catList.Add(new Category
                 {
                     CategoryId = 0,
@@ -121,8 +140,6 @@ namespace BudgetApp.Controllers
                 });
                 categories = catList.OrderBy(c => c.CategoryId);
             }
-            else
-                categories = dbContext.Categories;
 
             return new SelectList(categories, "CategoryId", "Name");
         }
@@ -133,14 +150,14 @@ namespace BudgetApp.Controllers
 
             if (page != 1)
                 output.Add("page", page.ToString());
-            if (itemsPerPage != defaultItemsPerPage)
+            if (itemsPerPage != DefaultItemsPerPage)
                 output.Add("itemsPerPage", itemsPerPage.ToString());
             if (catId != 0)
                 output.Add("catId", catId.ToString());
             if (fromDate.HasValue)
-                output.Add("fromDate", fromDate.Value.ToString(dateFormat));
+                output.Add("fromDate", fromDate.Value.ToString(DateFormat));
             if (toDate.HasValue)
-                output.Add("toDate", toDate.Value.ToString(dateFormat));
+                output.Add("toDate", toDate.Value.ToString(DateFormat));
 
             return output;
         }
