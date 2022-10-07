@@ -1,6 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using BudgetApp.Models;
+using Microsoft.EntityFrameworkCore;
 
-namespace BudgetApp.Models
+namespace BudgetApp.Helpers
 {
     public static class AppHelper
     {
@@ -15,22 +16,23 @@ namespace BudgetApp.Models
 
         public static Func<Item, bool> FilterAdapter(int catId, DateTime? fromDate, DateTime? toDate)
         {
-            return ((Item item) => {
+            return (item) =>
+            {
                 bool result = false;
 
-                if ((fromDate.HasValue) && (toDate.HasValue))
-                    result = (DateTime.Compare(fromDate.Value, item.DateTime) <= 0) && (DateTime.Compare(item.DateTime, toDate.Value) <= 0);
+                if (fromDate.HasValue && toDate.HasValue)
+                    result = DateTime.Compare(fromDate.Value, item.DateTime) <= 0 && DateTime.Compare(item.DateTime, toDate.Value) <= 0;
                 else if (fromDate.HasValue)
-                    result = (DateTime.Compare(fromDate.Value, item.DateTime) <= 0);
+                    result = DateTime.Compare(fromDate.Value, item.DateTime) <= 0;
                 else if (toDate.HasValue)
-                    result = (DateTime.Compare(item.DateTime, toDate.Value) <= 0);
+                    result = DateTime.Compare(item.DateTime, toDate.Value) <= 0;
                 else
                     result = true;
 
-                result = result && ((catId == 0) || (item.CategoryId == catId));
+                result = result && (catId == 0 || item.CategoryId == catId);
 
                 return result;
-            });
+            };
         }
     }
 }
