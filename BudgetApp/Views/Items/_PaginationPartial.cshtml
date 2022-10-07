@@ -1,8 +1,8 @@
 ﻿@model PaginationInfo
 
 @{
-    Dictionary<string, string> actionParameters = new Dictionary<string, string>(Model.RouteParams);
-    int currentPage = Model.RouteParams.ContainsKey("page") ? int.Parse(Model.RouteParams["page"]) : 1;
+    Dictionary<string, string> actionParameters = (Model.RouteParams != null) ? new Dictionary<string, string>(Model.RouteParams) : new Dictionary<string, string>();
+    int currentPage = (Model.RouteParams?.ContainsKey("page") ?? false) ? int.Parse(Model.RouteParams["page"]) : 1;
 }
 
 <div>

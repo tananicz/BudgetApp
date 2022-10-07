@@ -1,7 +1,7 @@
 ﻿@model PaginationInfo
 
 @{
-    Dictionary<string, string> routeParams = new Dictionary<string, string>(Model.RouteParams);
+    Dictionary<string, string> routeParams = (Model.RouteParams != null) ? new Dictionary<string, string>(Model.RouteParams) : new Dictionary<string, string>();
     routeParams["page"] = "";
     int currItemsPerPage = routeParams.ContainsKey("itemsPerPage") ? int.Parse(routeParams["itemsPerPage"]) : Model.DefaultItemsPerPage;
     int[] selectOptions = new int[] { 5, 10, 25, 50 };
