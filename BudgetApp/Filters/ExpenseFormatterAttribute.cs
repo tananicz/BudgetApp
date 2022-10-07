@@ -9,18 +9,21 @@ namespace BudgetApp.Filters
         public async Task OnResourceExecutionAsync(ResourceExecutingContext context, ResourceExecutionDelegate next)
         {
             Dictionary<string, StringValues> formData = new Dictionary<string, StringValues>();
+
             foreach(var kvp in context.HttpContext.Request.Form)
+            { 
                 formData[kvp.Key] = kvp.Value;
-            
+            }
+
             if (formData.ContainsKey("Expense"))
             {
                 string expense = formData["Expense"].ToString();
                 expense = Regex.Replace(expense, @"\s+", "");
                 expense = expense.Replace('.', ',').Replace("zł", "");
                 formData["Expense"] = expense;
+                context.HttpContext.Request.Form = new FormCollection(formData);
             }
 
-            context.HttpContext.Request.Form = new FormCollection(formData);
             await next();
         }
     }
