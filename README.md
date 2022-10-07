@@ -1,5 +1,4 @@
-* BudgetApp *
-Simple Budget App using ASP.NET MVC and a little bit JS
+Simple Budget App made using ASP.NET MVC and a little bit JS
 
 Requirements:
 - .NET 6.0 SDK
