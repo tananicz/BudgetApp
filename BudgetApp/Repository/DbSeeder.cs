@@ -13,7 +13,7 @@ namespace BudgetApp.Repository
                 context.Database.Migrate();
             }
 
-            if (context.Items.Count() == 0 && context.Categories.Count() == 0)
+            if (context.Items != null && context.Categories != null && context.Items.Count() == 0 && context.Categories.Count() == 0)
             {
                 logger.LogInformation("Baza danych pusta, przystępujemy do zasilenia przykładowymi danymi");
 
