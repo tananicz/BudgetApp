@@ -62,14 +62,14 @@ namespace BudgetApp.Repository
                     },
                     new Item
                     {
-                        Name = "Strój Batmana dla małego Miecia",
+                        Name = "Strój Batmana dla synka",
                         DateTime = new DateTime(2022, 07, 26),
                         Expense = -350,
                         Category = catKids
                     },
                     new Item
                     {
-                        Name = "Buty dla małej Dżesiki",
+                        Name = "Buty dla córki",
                         DateTime = new DateTime(2022, 06, 20),
                         Expense = -150,
                         Category = catKids
