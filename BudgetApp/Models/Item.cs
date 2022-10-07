@@ -10,7 +10,7 @@ namespace BudgetApp.Models
 
         [Required(ErrorMessage = "Proszę wprowadzić nazwę wydatku lub dochodu")]
         [MaxLength(255)]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         [Column(TypeName = "decimal(8, 2)")]
         [Display(Name = "Kwota")]
@@ -26,6 +26,6 @@ namespace BudgetApp.Models
         public int CategoryId { get; set; }
 
         [BindNever]
-        public Category Category { get; set; }
+        public Category? Category { get; set; }
     }
 }
