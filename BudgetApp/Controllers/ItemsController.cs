@@ -98,7 +98,7 @@ namespace BudgetApp.Controllers
                     await _dataRepository.UpdateItem(item);
                 }
 
-                return RedirectToAction(nameof(List), isNew ? null : (((Dictionary<string, string>?) TempData["paramsDictionary"]) ?? null));
+                return RedirectToAction(nameof(List), isNew ? null : (Dictionary<string, string>?)TempData["paramsDictionary"]);
             }
             else
             {
@@ -118,9 +118,11 @@ namespace BudgetApp.Controllers
         public async Task<IActionResult> DeleteItem(Item item)
         {
             if (!_dataRepository.CheckEntityExistence(typeof(Item), item.Id))
+            { 
                 return new StatusCodeResult(StatusCodes.Status403Forbidden);
+            }
 
-            Dictionary<string, string>? paramsDictionary = (Dictionary<string, string>?) TempData["paramsDictionary"] ?? null;
+            Dictionary<string, string>? paramsDictionary = (Dictionary<string, string>?)TempData["paramsDictionary"];
 
             await _dataRepository.RemoveItem(item);
 
@@ -150,15 +152,25 @@ namespace BudgetApp.Controllers
             Dictionary<string, string> output = new Dictionary<string, string>();
 
             if (page != 1)
+            { 
                 output.Add("page", page.ToString());
+            }
             if (itemsPerPage != DefaultItemsPerPage)
+            { 
                 output.Add("itemsPerPage", itemsPerPage.ToString());
+            }
             if (catId != 0)
+            { 
                 output.Add("catId", catId.ToString());
+            }
             if (fromDate.HasValue)
+            { 
                 output.Add("fromDate", fromDate.Value.ToString(DateFormat));
+            }
             if (toDate.HasValue)
+            { 
                 output.Add("toDate", toDate.Value.ToString(DateFormat));
+            }
 
             return output;
         }
