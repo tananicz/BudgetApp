@@ -1,5 +1,4 @@
 ﻿using BudgetApp.Models;
-using System.Collections.Generic;
 
 namespace BudgetApp.Repository
 {
