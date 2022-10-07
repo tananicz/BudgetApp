@@ -4,7 +4,7 @@
 {
     <tr>
         @{
-            string existingItemsUrl = Url.Action("List", "Items", new { catId = Model.CategoryId });
+            string? existingItemsUrl = Url.Action("List", "Items", new { catId = Model.CategoryId });
         }
 
         <td style="border-bottom: 1px solid #ccc;">

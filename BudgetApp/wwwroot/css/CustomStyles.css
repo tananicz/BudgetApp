@@ -1,0 +1,16 @@
+﻿.form-group label {
+    font-weight: bold;
+}
+
+.error-container {
+    margin: 10px 0 10px 0;
+}
+
+.field-validation-error {
+    color: red;
+}
+
+select.input-validation-error, input.input-validation-error {
+    border: 2px solid red;
+    border-radius: 4px;
+}

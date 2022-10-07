@@ -10,7 +10,9 @@
         foreach (SelectListItem item in Model.CategoriesSelectList)
         {
             if (item.Value == catId)
+            {
                 item.Selected = true;
+            }
         }
     }
 }

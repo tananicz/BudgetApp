@@ -8,7 +8,9 @@
     string formTitle = isEditMode ? "Edytuj wpis" : "Dodaj nowy wpis";
 
     if (!isEditMode)
+    {
         Model.DateTime = DateTime.Now;
+    }
 
     bool isExpenseValid = !(ViewContext.ModelState.GetFieldValidationState(nameof(Model.Expense)) == Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Invalid);
     bool outcome = false;
@@ -18,15 +20,10 @@
         Model.Expense = Math.Abs(Model.Expense);
     }
 
-    Dictionary<string, string> paramsDictionary =  (Dictionary<string, string>) TempData.Peek("paramsDictionary") ?? null;
+    Dictionary<string, string>? paramsDictionary =  (Dictionary<string, string>?) TempData.Peek("paramsDictionary");
 }
 
-<style>
-    .form-group label {
-        font-weight: bold;
-    }
-</style>
-
+<link rel="stylesheet" href="~/css/CustomStyles.css" />
 <partial name="_ServerSideValidationPartial" />
 <partial name="_ClientSideValidationPartial" />
 
