@@ -63,7 +63,7 @@ namespace BudgetApp.Controllers
             {
                 Category? catToRemove = await _dataRepository.GetCategory(category.CategoryId);
 
-                if (catToRemove!.Items.Any())
+                if (catToRemove!.Items != null && catToRemove!.Items.Any())
                 { 
                     ModelState.AddModelError("", "Items exist assigned to category");
                 }
@@ -87,7 +87,7 @@ namespace BudgetApp.Controllers
         public async Task<IActionResult> ItemsInCategory([FromRoute(Name = "id")] int categoryId)
         {
             Category? category = await _dataRepository.GetCategory(categoryId);
-            int itemsCount = (category != null) ? category.Items.Count() : 0;
+            int itemsCount = category?.Items?.Count() ?? 0;
             return Json(new { count = itemsCount });
         }
     }

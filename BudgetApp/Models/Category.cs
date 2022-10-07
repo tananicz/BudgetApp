@@ -9,9 +9,9 @@ namespace BudgetApp.Models
 
         [Required(ErrorMessage = "Proszę podać nazwę kategorii")]
         [MaxLength(255)]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         [BindNever]
-        public IEnumerable<Item> Items { get; set; }
+        public IEnumerable<Item>? Items { get; set; }
     }
 }
