@@ -2,7 +2,7 @@
 
 @{
     //we need paramsDictionary in TempData when sending post requests (delete item) and redirecting to other actions (add new item, edit existing item)
-    TempData["paramsDictionary"] = Model.PaginationInfo.RouteParams;
+    TempData["paramsDictionary"] = Model.PaginationInfo?.RouteParams;
 }
 
 <link rel="stylesheet" href="~/css/DialogStyles.css" />
@@ -20,18 +20,21 @@
 <partial name="_FilterPartial" model="Model" />
 
 <div class="m-2">
-    @if (Model.Items.Count() == 0)
+    @if (Model.Items != null) 
     {
-        <h5 class="mt-5 p-4 text-center text-white bg-danger">Nie znaleziono żadnych pozycji spełniających zadane warunki filtrowania</h5>
-    }
-    else
-    {
-        <table style="width: 100%; border-collapse: separate; border-spacing: 0 1em;">
-            @foreach (Item item in @Model.Items)
-            {
-                <partial name="_ExpensePartial" model="item" />
-            }
-        </table>
+        @if (Model.Items.Count() == 0)
+        {
+            <h5 class="mt-5 p-4 text-center text-white bg-danger">Nie znaleziono żadnych pozycji spełniających zadane warunki filtrowania</h5>
+        }
+        else
+        {
+            <table style="width: 100%; border-collapse: separate; border-spacing: 0 1em;">
+                @foreach (Item item in @Model.Items)
+                {
+                    <partial name="_ExpensePartial" model="item" />
+                }
+            </table>
+        }
     }
 </div>
 

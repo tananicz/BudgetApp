@@ -1,11 +1,11 @@
 ﻿@model ListItemsModel
 
 @{
-    Dictionary<string, string> routeParams = Model.PaginationInfo.RouteParams;
+    Dictionary<string, string>? routeParams = Model.PaginationInfo?.RouteParams ?? new Dictionary<string, string>();
     bool isFilterApplied = routeParams.ContainsKey("catId") || routeParams.ContainsKey("fromDate") || routeParams.ContainsKey("toDate");
     string catId = routeParams.ContainsKey("catId") ? routeParams["catId"] : "0";
 
-    if (isFilterApplied)
+    if (isFilterApplied && Model.CategoriesSelectList != null)
     {
         foreach (SelectListItem item in Model.CategoriesSelectList)
         {
