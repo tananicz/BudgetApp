@@ -1,19 +1,12 @@
 ﻿using BudgetApp.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace BudgetApp.Repository
 {
     public class DbSeeder
     {
-        public static void InitializeDb(BudgetDbContext context, ILogger<DbSeeder> logger)
+        public static async Task InitializeDb(IDataRepository repository, ILogger<DbSeeder> logger)
         {
-            if (context.Database.GetPendingMigrations().Any())
-            {
-                logger.LogInformation("Przeprowadzanie zaległych migracji");
-                context.Database.Migrate();
-            }
-
-            if (context.Items != null && context.Categories != null && context.Items.Count() == 0 && context.Categories.Count() == 0)
+            if (repository.CountEntities<Item>() == 0 && repository.CountEntities<Category>() == 0)
             {
                 logger.LogInformation("Baza danych pusta, przystępujemy do zasilenia przykładowymi danymi");
 
@@ -23,7 +16,7 @@ namespace BudgetApp.Repository
                 Category catShopping = new Category { Name = "Zakupy" };
                 Category catCulture = new Category { Name = "Kultura" };
 
-                context.Items.AddRange(new Item[]
+                await repository.AddItems(new Item[]
                 {
                     new Item
                     {
@@ -173,7 +166,6 @@ namespace BudgetApp.Repository
                         Category = catCulture
                     }
                 });
-                context.SaveChanges();
                 logger.LogInformation("Baza danych zasilona");
             }
             else

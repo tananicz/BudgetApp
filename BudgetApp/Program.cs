@@ -20,7 +20,7 @@ var app = builder.Build();
 
 using (IServiceScope scope = app.Services.CreateScope())
 {
-    DbSeeder.InitializeDb(scope.ServiceProvider.GetRequiredService<BudgetDbContext>(), app.Services.GetRequiredService<ILogger<DbSeeder>>());
+    DbSeeder.InitializeDb(scope.ServiceProvider.GetRequiredService<IDataRepository>(), app.Services.GetRequiredService<ILogger<DbSeeder>>()).Wait();
 }
 app.UseStaticFiles();
 app.UseRouting();

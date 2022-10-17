@@ -57,6 +57,15 @@ namespace BudgetApp.Repository
             }
         }
 
+        public async Task AddItems(params Item[] items)
+        {
+            if (_dbContext.Items != null)
+            {
+                await _dbContext.Items.AddRangeAsync(items);
+                await _dbContext.SaveChangesAsync();
+            }
+        }
+
         public async Task UpdateItem(Item item)
         {
             if (_dbContext.Items != null)
@@ -134,6 +143,11 @@ namespace BudgetApp.Repository
                 _dbContext.Entry(entity).State = EntityState.Detached;
                 return true;
             }
+        }
+
+        public int CountEntities<T>() where T : class
+        {
+            return _dbContext.Set<T>().Count();
         }
     }
 }

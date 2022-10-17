@@ -7,6 +7,7 @@ namespace BudgetApp.Repository
         public List<Item>? GetItems(bool includeCategories, Func<Item, bool> filterAdapter);
         public Task<Item?> GetItem(int id);
         public Task AddItem(Item item);
+        public Task AddItems(params Item[] items);
         public Task UpdateItem(Item item);
         public Task RemoveItem(Item item);
         public List<Category>? GetCategories();
@@ -15,5 +16,6 @@ namespace BudgetApp.Repository
         public Task UpdateCategory(Category category);
         public Task RemoveCategory(Category category);
         public bool CheckEntityExistence(Type entityType, int key);
+        public int CountEntities<T>() where T : class;
     }
 }
