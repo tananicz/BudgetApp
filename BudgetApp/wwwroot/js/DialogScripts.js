@@ -1,5 +1,5 @@
 ﻿function toggleEditRow(currentId) {
-    var alreadyOpenedRowId = "";
+    let alreadyOpenedRowId = "";
     $("#" + currentId).parent().children("[id]").each(function () {
         if ($(this).css("display") != "none") {
             alreadyOpenedRowId = $(this).attr("id");
@@ -11,7 +11,7 @@
 
     clearValidationErrors();
 
-    var timeout = ((alreadyOpenedRowId != "") && (alreadyOpenedRowId != currentId)) ? 400 : 0;
+    const timeout = ((alreadyOpenedRowId != "") && (alreadyOpenedRowId != currentId)) ? 400 : 0;
 
     setTimeout(function () {
         $("#" + currentId).toggle(400);
@@ -29,13 +29,13 @@ function closeTableRows() {
 
 function clearValidationErrors() {
     $("#categoriesTable > tbody").children("[id]").each(function () {
-        var errorMsgSpan = $(this).children("td").first().children("form").first().children("div").first().children("span").first();
-        var input = errorMsgSpan.parent().next("input.form-control");
-        var spanError = errorMsgSpan.hasClass("field-validation-error");
+        const errorMsgSpan = $(this).children("td").first().children("form").first().children("div").first().children("span").first();
+        const input = errorMsgSpan.parent().next("input.form-control");
+        const spanError = errorMsgSpan.hasClass("field-validation-error");
 
         if (spanError) {
             if ($(this).attr("id") != "addCategoryTr") {
-                var catName = $(this).prev("tr").children("td").first().children("p").first().children("strong").first().html();
+                const catName = $(this).prev("tr").children("td").first().children("p").first().children("strong").first().html();
                 input.val(catName.toString());
             }
 
@@ -53,10 +53,10 @@ async function confirmDeleteCategory(formId, itemsUrl) {
     closeTableRows();
     clearValidationErrors();
 
-    var formIdSplit = formId.split("_");
-    var id = formIdSplit[formIdSplit.length - 1];
-    var resp = await $.get("/Categories/ItemsInCategory/" + id, null, null, "json");
-    var itemsCount = resp.count;
+    const formIdSplit = formId.split("_");
+    const id = formIdSplit[formIdSplit.length - 1];
+    const resp = await $.get("/Categories/ItemsInCategory/" + id, null, null, "json");
+    const itemsCount = resp.count;
 
     var msgHtml = "";
     var buttonsDivHtml = "";
@@ -76,13 +76,13 @@ async function confirmDeleteCategory(formId, itemsUrl) {
 
 function checkFilterDates(fromDateStr, toDateStr) {
     if (fromDateStr && toDateStr) {
-        var fromDate = new Date(fromDateStr);
-        var toDate = new Date(toDateStr);
+        const fromDate = new Date(fromDateStr);
+        const toDate = new Date(toDateStr);
         if (fromDate <= toDate)
             $("#applyFilter").click();
         else {
-            msgHtml = "Data w polu 'Od daty' nie może być późnejsza niż data w polu 'Do daty'";
-            buttonsDivHtml = "<button onclick='closeDialog();' class='btn btn-light'>Zamknij</button>";
+            const msgHtml = "Data w polu 'Od daty' nie może być późnejsza niż data w polu 'Do daty'";
+            const buttonsDivHtml = "<button onclick='closeDialog();' class='btn btn-light'>Zamknij</button>";
             showDialog(buttonsDivHtml, msgHtml);
         }
     }
@@ -92,16 +92,16 @@ function checkFilterDates(fromDateStr, toDateStr) {
 }
 
 function confirmDeleteItem(formId) {
-    msgHtml = "Czy jesteś pewien, że chcesz usunąć tę pozycję?";
-    buttonsDivHtml = "<button type='submit' form='" + formId + "' class='btn btn-light' style='float: left;'>Tak</button><button onclick='closeDialog();' class='btn btn-light' style='float: right;'>Nie</button>";
+    const msgHtml = "Czy jesteś pewien, że chcesz usunąć tę pozycję?";
+    const buttonsDivHtml = "<button type='submit' form='" + formId + "' class='btn btn-light' style='float: left;'>Tak</button><button onclick='closeDialog();' class='btn btn-light' style='float: right;'>Nie</button>";
     showDialog(buttonsDivHtml, msgHtml);
 }
 
 function showDialog(buttonsDivHtml, msgHtml) {
-    var divOverlay = document.createElement("div");
+    const divOverlay = document.createElement("div");
     divOverlay.id = "dialogOverlay";
 
-    var div = document.createElement("div");
+    const div = document.createElement("div");
     div.id = "dialog";
     div.style = "display: none;"
 
@@ -111,8 +111,8 @@ function showDialog(buttonsDivHtml, msgHtml) {
     jQuery("#dialogOverlay").addClass("overlay");
     jQuery("#dialog").addClass("outerDialog");
 
-    var dialogHeight = 200;
-    var dialogYPos = Math.round((screen.availHeight - dialogHeight) / 2);
+    const dialogHeight = 200;
+    const dialogYPos = Math.round((screen.availHeight - dialogHeight) / 2);
     jQuery("#dialog").css("height", dialogHeight + "px");
     jQuery("#dialog").css("top", dialogYPos + "px");
 
