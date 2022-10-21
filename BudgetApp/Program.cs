@@ -5,8 +5,17 @@ using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
+bool isMemoryDb = builder.Configuration.GetValue<bool>("isMemoryDb");
+
 builder.Services.AddDbContext<BudgetDbContext>(opts => {
-    opts.UseSqlServer(builder.Configuration["ConnectionStrings:BudgetDbConnectionStr"]);
+    if (isMemoryDb)
+    {
+        opts.UseInMemoryDatabase("BudgetDb");
+    }
+    else
+    { 
+        opts.UseSqlServer(builder.Configuration["ConnectionStrings:BudgetDbConnectionStr"]);
+    }
     opts.EnableSensitiveDataLogging(true);
 });
 builder.Services.AddScoped<IDataRepository, BudgetAppDataRepository>();
