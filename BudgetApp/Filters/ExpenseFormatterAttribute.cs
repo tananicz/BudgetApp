@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Primitives;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace BudgetApp.Filters
@@ -19,7 +20,8 @@ namespace BudgetApp.Filters
             {
                 string expense = formData["Expense"].ToString();
                 expense = Regex.Replace(expense, @"\s+", "");
-                expense = expense.Replace('.', ',').Replace("zł", "");
+                expense = expense.Replace(",", ".").Replace("zł", "");
+                expense = decimal.Parse(expense, CultureInfo.InvariantCulture).ToString();
                 formData["Expense"] = expense;
                 context.HttpContext.Request.Form = new FormCollection(formData);
             }

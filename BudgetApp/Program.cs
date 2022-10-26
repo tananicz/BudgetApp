@@ -34,7 +34,7 @@ using (IServiceScope scope = app.Services.CreateScope())
 app.UseStaticFiles();
 app.UseRouting();
 app.UseEndpoints(endpoints => {
-    endpoints.AddUserFriendlyRoutes(); //comment this line if you want params passed in query string
+    endpoints.AddUserFriendlyRoutes();
     endpoints.MapControllerRoute("default", "/{controller=Items}/{action=List}/{id:int?}");
 });
 app.Run();
