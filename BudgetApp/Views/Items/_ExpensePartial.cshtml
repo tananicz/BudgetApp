@@ -11,7 +11,7 @@
         <p class="h5"><strong>@Model.Name</strong></p>
         <p><span style="color: @expenseColor;"><strong>@expenseType</strong></span></p>
     </td>
-    <td style="border-bottom: 1px solid #ccc;"><p class="h4"><span style="color: @expenseColor;"><strong>@Model.Expense.ToString() zł</strong></span></p></td>
+    <td style="border-bottom: 1px solid #ccc;"><p class="h4"><span style="color: @expenseColor;"><strong>@Model.Expense.ToString("0.00") zł</strong></span></p></td>
     <td style="border-bottom: 1px solid #ccc;"><p class="h5"><strong>@Model.Category?.Name</strong></p></td>
     <td style="border-bottom: 1px solid #ccc; text-align: center;">
         <span style="margin-right: 1.2em;">
